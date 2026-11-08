@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configurações - Video Download Unlimited</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="settings-container">
+    <!-- Header -->
+    <header class="settings-header">
+      <div class="brand">
+        <img src="../icons/icon-48.png" alt="Logo" class="logo">
+        <div>
+          <h1>Video Download Unlimited</h1>
+          <p>Painel de Gerenciamento e Preferências</p>
+        </div>
+      </div>
+      <span class="version-badge">v1.0.0 Unlimited</span>
+    </header>
+
+    <!-- Main Content -->
+    <main class="settings-main">
+      <!-- Seção: Preferências de Download -->
+      <section class="settings-card">
+        <h2>Preferências de Download</h2>
+        <div class="setting-item">
+          <div class="setting-info">
+            <label for="preferred-quality">Qualidade de Vídeo Preferencial</label>
+            <span>Define a qualidade padrão selecionada primeiro.</span>
+          </div>
+          <select id="preferred-quality" class="form-select">
+            <option value="highest">Máxima Disponível (Melhor resolução)</option>
+            <option value="1080p">1080p (Full HD)</option>
+            <option value="720p">720p (Rápido / HD)</option>
+            <option value="audio">Apenas Áudio (MP3/M4A)</option>
+          </select>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <label for="max-concurrent">Downloads Simultâneos Máximos</label>
+            <span>Número de arquivos baixados ao mesmo tempo.</span>
+          </div>
+          <select id="max-concurrent" class="form-select">
+            <option value="1">1 download por vez</option>
+            <option value="2" selected>2 simultâneos (Recomendado)</option>
+            <option value="3">3 simultâneos (Rápido)</option>
+            <option value="5">5 simultâneos</option>
+          </select>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <label for="filename-pattern">Padrão de Nome do Arquivo</label>
+            <span>Tags: {title}, {quality}, {format}</span>
+          </div>
+          <input type="text" id="filename-pattern" class="form-input" value="{title} [{quality}]">
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <label for="subfolder-mode">Organização em Subpastas</label>
+            <span>Organiza os vídeos dentro da pasta Downloads.</span>
+          </div>
+          <select id="subfolder-mode" class="form-select">
+            <option value="none">Direto em Downloads (Sem subpasta)</option>
+            <option value="site" selected>Subpasta com Nome do Site (Recomendado)</option>
+            <option value="date">Subpasta por Ano-Mês (ex: 2026-11)</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- Coluna Direita: Notificações & Histórico -->
+      <div class="settings-col-right">
+        <!-- Seção: Notificações e Comportamento -->
+        <section class="settings-card">
+          <h2>Notificações e Visual</h2>
+          <div class="setting-item">
+            <div class="setting-info">
+              <label for="desktop-notifications">Notificações na Área de Trabalho</label>
+              <span>Exibir alerta nativo do Windows ao concluir downloads.</span>
+            </div>
+            <input type="checkbox" id="desktop-notifications" class="form-checkbox" checked>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <label for="theme">Tema Visual</label>
+              <span>Alterne entre visual escuro moderno ou claro.</span>
+            </div>
+            <select id="theme" class="form-select">
+              <option value="dark" selected>Modo Escuro (Padrão)</option>
+              <option value="light">Modo Claro</option>
+            </select>
+          </div>
+        </section>
+
+        <!-- Seção: Armazenamento e Histórico -->
+        <section class="settings-card">
+          <h2>Histórico e Dados</h2>
+          <div class="setting-item">
+            <div class="setting-info">
+              <label>Limpar Histórico de Downloads</label>
+              <span>Remove todos os registros salvos localmente.</span>
+            </div>
+            <button id="btn-clear-history" class="btn-danger">Limpar Histórico</button>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <label>Restaurar Padrões</label>
+              <span>Restaura configurações para valores originais.</span>
+            </div>
+            <button id="btn-reset" class="btn-secondary">Restaurar Padrões</button>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Feedback Toast -->
+    <div id="save-toast" class="toast hidden">Configurações salvas com sucesso!</div>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>

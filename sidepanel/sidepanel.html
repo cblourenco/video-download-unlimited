@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Download Unlimited - Painel</title>
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <div class="panel-container">
+    <header class="panel-header">
+      <div class="panel-brand">
+        <img src="../icons/icon-32.png" alt="Logo" class="panel-logo">
+        <h2>Video Download Unlimited</h2>
+      </div>
+      <div class="panel-tabs">
+        <button id="tab-active" class="panel-tab-btn active">Downloads</button>
+        <button id="tab-history" class="panel-tab-btn">Histórico</button>
+      </div>
+    </header>
+
+    <main class="panel-content">
+      <!-- Seção de Vídeos da Página Atual -->
+      <section id="section-current" class="panel-section">
+        <h3 class="section-title">Mídias Detectadas na Aba</h3>
+        <div id="current-media-list" class="media-container">
+          <!-- Dinâmico -->
+        </div>
+      </section>
+
+      <!-- Seção de Histórico -->
+      <section id="section-history" class="panel-section hidden">
+        <div class="history-actions">
+          <h3 class="section-title">Histórico de Downloads</h3>
+          <button id="btn-clear-history" class="btn-text">Limpar</button>
+        </div>
+        <div id="history-list" class="media-container">
+          <!-- Dinâmico -->
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="sidepanel.js"></script>
+</body>
+</html>

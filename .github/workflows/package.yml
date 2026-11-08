@@ -1,0 +1,43 @@
+name: Package Extension
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate manifest.json
+        run: |
+          python3 -c "import json; json.load(open('manifest.json'))"
+          echo "manifest.json validado com sucesso!"
+
+      - name: Create Extension ZIP artifact
+        run: |
+          zip -r Video-Download-Unlimited.zip \
+            manifest.json \
+            background/ \
+            content/ \
+            engine/ \
+            icons/ \
+            options/ \
+            popup/ \
+            sidepanel/ \
+            README.md \
+            LICENSE \
+            -x "*.DS_Store" "*.git*"
+
+      - name: Upload Release Asset
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: Video-Download-Unlimited.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

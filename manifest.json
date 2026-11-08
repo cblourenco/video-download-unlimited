@@ -1,0 +1,64 @@
+{
+   "manifest_version": 3,
+   "name": "Video Download Unlimited",
+   "version": "1.0.0",
+   "description": "Baixe vídeos e áudios da web em alta qualidade sem limites e com 1 clique.",
+   "author": "Video Download Unlimited Team",
+   "icons": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png",
+      "512": "icons/icon-512.png"
+   },
+   "action": {
+      "default_popup": "popup/popup.html",
+      "default_title": "Video Download Unlimited",
+      "default_icon": {
+         "16": "icons/icon-16.png",
+         "32": "icons/icon-32.png",
+         "48": "icons/icon-48.png",
+         "128": "icons/icon-128.png"
+      }
+   },
+   "side_panel": {
+      "default_path": "sidepanel/sidepanel.html"
+   },
+   "options_ui": {
+      "page": "options/options.html",
+      "open_in_tab": true
+   },
+   "background": {
+      "service_worker": "background/service_worker.js",
+      "type": "module"
+   },
+   "content_scripts": [
+      {
+         "matches": ["<all_urls>"],
+         "js": ["content/detector.js"],
+         "run_at": "document_end",
+         "all_frames": true
+      }
+   ],
+   "permissions": [
+      "storage",
+      "downloads",
+      "webRequest",
+      "sidePanel",
+      "tabs",
+      "notifications",
+      "offscreen"
+   ],
+   "host_permissions": [
+      "<all_urls>"
+   ],
+   "content_security_policy": {
+      "extension_pages": "script-src 'self' 'wasm-unsafe-eval'"
+   },
+   "web_accessible_resources": [
+      {
+         "resources": ["icons/*", "engine/*"],
+         "matches": ["<all_urls>"]
+      }
+   ]
+}
