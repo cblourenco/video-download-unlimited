@@ -23,6 +23,23 @@ Diferente de extensões legadas que exigem a instalação de executáveis auxili
 
 ---
 
+## 📸 Demonstração da Interface
+
+<div align="center">
+
+| Popup Principal | Detecção e Download em Ação |
+| :---: | :---: |
+| <img src="screenshots/popup-main.png" alt="Popup Principal" width="350"/> | <img src="screenshots/popup-usage.png" alt="Detecção e Download em Ação" width="350"/> |
+
+<br/>
+
+### Painel de Configurações & Gerenciamento Avançado
+<img src="screenshots/options-settings.png" alt="Painel de Configurações e Histórico" width="820"/>
+
+</div>
+
+---
+
 ## ✨ Principais Funcionalidades
 
 - ⚡ **Zero Dependências Externas**: Não requer Node.js, Python, FFmpeg instalado no sistema operacional ou softwares companheiros. Tudo roda dentro do sandbox do navegador.
@@ -131,6 +148,10 @@ Video Download Unlimited/
 │   ├── options.html
 │   ├── options.css
 │   └── options.js
+├── screenshots/               # Capturas de tela demonstrativas para documentação
+│   ├── options-settings.png
+│   ├── popup-main.png
+│   └── popup-usage.png
 ├── popup/                     # Interface do popup principal ao clicar no ícone
 │   ├── popup.html
 │   ├── popup.css
