@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🚀 Video Download Unlimited
+# Video Download Unlimited
 
 **A extensão definitiva para captura, processamento e download de vídeos e áudios na web.**  
 *Baseada na especificação Google Chrome Manifest V3, 100% in-browser, com motor WebAssembly (LibAV/FFmpeg) e zero dependências externas.*
@@ -15,7 +15,7 @@
 
 ---
 
-## 📖 Visão Geral
+## <img src="assets/icons/book-open.svg" width="20" height="20" /> Visão Geral
 
 O **Video Download Unlimited** é uma extensão avançada e moderna para navegadores da família Chromium (Google Chrome, Brave, Microsoft Edge, Opera, Vivaldi, etc.). Ela detecta e captura transmissões de mídia complexas (como fluxos segmentados HLS/m3u8, inclusive criptografados com AES-128, e DASH) diretamente no tráfego da rede e na árvore DOM das páginas.
 
@@ -23,7 +23,7 @@ Diferente de extensões legadas que exigem a instalação de executáveis auxili
 
 ---
 
-## 📸 Demonstração da Interface
+## <img src="assets/icons/monitor.svg" width="20" height="20" /> Demonstração da Interface
 
 <div align="center">
 
@@ -40,23 +40,23 @@ Diferente de extensões legadas que exigem a instalação de executáveis auxili
 
 ---
 
-## ✨ Principais Funcionalidades
+## <img src="assets/icons/check-circle.svg" width="20" height="20" /> Principais Funcionalidades
 
-- ⚡ **Zero Dependências Externas**: Não requer Node.js, Python, FFmpeg instalado no sistema operacional ou softwares companheiros. Tudo roda dentro do sandbox do navegador.
-- 🎯 **Sniffing de Rede & Detector DOM**: Intercepta solicitações de rede via `chrome.webRequest` e monitora elementos `<video>`, `<audio>` e tags de mídia no DOM com retentativa inteligente e backoff exponencial.
-- 🎬 **Suporte Completo a HLS (.m3u8) & AES-128**: Baixa múltiplos segmentos `.ts`, descriptografa fragmentos criptografados com chave AES-128 e realiza o muxing direto para contêiner MP4.
-- 🎵 **Extração Direta de Áudio (MP3 / AAC)**: Permite extrair a faixa sonora de qualquer vídeo com 1 clique sem perda de qualidade.
-- 🖼️ **Captura Automática de Thumbnails**: Gera miniaturas reais dos vídeos através de tags `og:image`, posters do player ou snapshot instantâneo via HTML5 Canvas.
-- 🗂️ **Painel Lateral Nativo (Chrome Side Panel)**: Acompanhe downloads ativos e mídias detectadas sem que a janela se feche ao clicar fora.
-- 💎 **Popup Glassmorphism Moderno**: Interface em Modo Escuro (Dark Mode) responsiva, com visualização de resolução, formato, tamanho estimado e filtros rápidos (Todos, Vídeo, Áudio, HLS).
-- 🚦 **Fila de Downloads Inteligente**: Controle de concorrência (`maxConcurrent`), ordenação por prioridade e prevenção de sobrecarga na largura de banda.
-- 📁 **Organização Automática de Arquivos**: Salva downloads organizados em subpastas por nome de domínio (`Downloads/Video Download Unlimited/{dominio}/`) ou por data.
-- 🔔 **Notificações Nativas do Sistema**: Alerta sonoro e visual integrado ao sistema operacional quando os downloads são finalizados.
-- 🛡️ **Privacidade Absoluta (100% Local)**: Nenhum dado de navegação, histórico, cookie ou mídia é enviado para servidores de terceiros.
+- <img src="assets/icons/cpu.svg" width="16" height="16" /> **Zero Dependências Externas**: Não requer Node.js, Python, FFmpeg instalado no sistema operacional ou softwares companheiros. Tudo roda dentro do sandbox do navegador.
+- <img src="assets/icons/radio.svg" width="16" height="16" /> **Sniffing de Rede & Detector DOM**: Intercepta solicitações de rede via `chrome.webRequest` e monitora elementos `<video>`, `<audio>` e tags de mídia no DOM com retentativa inteligente e backoff exponencial.
+- <img src="assets/icons/film.svg" width="16" height="16" /> **Suporte Completo a HLS (.m3u8) & AES-128**: Baixa múltiplos segmentos `.ts`, descriptografa fragmentos criptografados com chave AES-128 e realiza o muxing direto para contêiner MP4.
+- <img src="assets/icons/music.svg" width="16" height="16" /> **Extração Direta de Áudio (MP3 / AAC)**: Permite extrair a faixa sonora de qualquer vídeo com 1 clique sem perda de qualidade.
+- <img src="assets/icons/image.svg" width="16" height="16" /> **Captura Automática de Thumbnails**: Gera miniaturas reais dos vídeos através de tags `og:image`, posters do player ou snapshot instantâneo via HTML5 Canvas.
+- <img src="assets/icons/sidebar.svg" width="16" height="16" /> **Painel Lateral Nativo (Chrome Side Panel)**: Acompanhe downloads ativos e mídias detectadas sem que a janela se feche ao clicar fora.
+- <img src="assets/icons/layout.svg" width="16" height="16" /> **Interface Moderna (Dark Mode & Glassmorphism)**: Interface responsiva em modo escuro, com visualização de resolução, formato, tamanho estimado e filtros rápidos (Todos, Vídeo, Áudio, HLS).
+- <img src="assets/icons/sliders.svg" width="16" height="16" /> **Fila de Downloads Inteligente**: Controle de concorrência (`maxConcurrent`), ordenação por prioridade e prevenção de sobrecarga na largura de banda.
+- <img src="assets/icons/folder.svg" width="16" height="16" /> **Organização Automática de Arquivos**: Salva downloads organizados em subpastas por nome de domínio (`Downloads/Video Download Unlimited/{dominio}/`) ou por data.
+- <img src="assets/icons/bell.svg" width="16" height="16" /> **Notificações Nativas do Sistema**: Alerta sonoro e visual integrado ao sistema operacional quando os downloads são finalizados.
+- <img src="assets/icons/shield-check.svg" width="16" height="16" /> **Privacidade Absoluta (100% Local)**: Nenhum dado de navegação, histórico, cookie ou mídia é enviado para servidores de terceiros.
 
 ---
 
-## 🏗️ Arquitetura Técnica
+## <img src="assets/icons/layers.svg" width="20" height="20" /> Arquitetura Técnica
 
 ```
                     ┌──────────────────────────────────────────────┐
@@ -97,7 +97,7 @@ Diferente de extensões legadas que exigem a instalação de executáveis auxili
 
 ---
 
-## 📥 Como Instalar e Executar
+## <img src="assets/icons/download.svg" width="20" height="20" /> Instalação e Execução
 
 Como a extensão segue o padrão aberto **Manifest V3**, você pode carregá-la diretamente no navegador sem precisar compilar nada.
 
@@ -122,11 +122,11 @@ Como a extensão segue o padrão aberto **Manifest V3**, você pode carregá-la 
    - Selecione a pasta onde o projeto foi clonado/extraído (a pasta que contém o arquivo `manifest.json`).
 
 5. **Fixe na barra de ferramentas:**
-   - Clique no ícone de "quebra-cabeça" das extensões no navegador e fixe o ícone do **Video Download Unlimited** para acesso rápido com 1 clique!
+   - Clique no ícone de extensões no navegador e fixe o ícone do **Video Download Unlimited** para acesso rápido.
 
 ---
 
-## 📂 Estrutura de Arquivos
+## <img src="assets/icons/folder-tree.svg" width="20" height="20" /> Estrutura de Arquivos
 
 ```text
 Video Download Unlimited/
@@ -134,6 +134,8 @@ Video Download Unlimited/
 │   ├── ISSUE_TEMPLATE/        # Modelos para Bug Report e Sugestões
 │   ├── workflows/package.yml  # Automação CI para gerar pacotes ZIP de release
 │   └── pull_request_template.md
+├── assets/
+│   └── icons/                 # Ícones vetoriais SVG de documentação
 ├── background/
 │   └── service_worker.js      # Núcleo de interceptação, fila e histórico
 ├── content/
@@ -143,7 +145,7 @@ Video Download Unlimited/
 │   ├── libav-*.wasm.mjs       # Carregador e interface JS para o módulo WASM
 │   ├── offscreen.html         # Documento offscreen para tarefas pesadas
 │   └── offscreen.js           # Gerenciador de downloads HLS, decrypt e muxing
-├── icons/                     # Ícones em resoluções 16px, 32px, 48px, 128px e 512px
+├── icons/                     # Ícones da extensão (16px, 32px, 48px, 128px e 512px)
 ├── options/                   # Página de preferências, histórico e configurações
 │   ├── options.html
 │   ├── options.css
@@ -169,7 +171,7 @@ Video Download Unlimited/
 
 ---
 
-## 🔒 Transparência e Permissões
+## <img src="assets/icons/lock.svg" width="20" height="20" /> Transparência e Permissões
 
 Em conformidade com os princípios de segurança da Chrome Web Store e do ecossistema open-source:
 
@@ -187,20 +189,20 @@ Em conformidade com os princípios de segurança da Chrome Web Store e do ecossi
 
 ---
 
-## 🤝 Como Contribuir
+## <img src="assets/icons/git-pull-request.svg" width="20" height="20" /> Como Contribuir
 
-Contribuições são muito bem-vindas! Se você deseja colaborar:
+Contribuições são bem-vindas. Se você deseja colaborar:
 
 1. Faça um Fork do projeto.
-2. Crie sua Feature Branch (`git checkout -b feature/recurso-incrivel`).
-3. Faça o commit das suas alterações (`git commit -m 'feat: adiciona recurso incrivel'`).
-4. Faça o Push para a branch (`git push origin feature/recurso-incrivel`).
+2. Crie sua Feature Branch (`git checkout -b feature/recurso-proposto`).
+3. Faça o commit das suas alterações (`git commit -m 'feat: implementa melhoria'`).
+4. Faça o Push para a branch (`git push origin feature/recurso-proposto`).
 5. Abra um **Pull Request**.
 
 Consulte o arquivo [CONTRIBUTING.md](CONTRIBUTING.md) para obter mais detalhes.
 
 ---
 
-## 📄 Licença
+## <img src="assets/icons/file-text.svg" width="20" height="20" /> Licença
 
 Este projeto é distribuído sob os termos da licença **MIT**. Veja o arquivo [LICENSE](LICENSE) para mais informações.

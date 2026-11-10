@@ -1,12 +1,12 @@
 ---
-name: Relatório de Bug 🐛
-about: Crie um relatório para nos ajudar a identificar e corrigir falhas
+name: Relatório de Bug
+about: Crie um relatório para identificar e corrigir falhas
 title: '[BUG] '
 labels: bug
 assignees: ''
 ---
 
-**Descrição do Bug**
+**Descrição do Problema**
 Uma descrição clara e concisa do problema encontrado.
 
 **Passos para Reproduzir**

@@ -1,10 +1,10 @@
-# Guia de Contribuição 🤝
+# Guia de Contribuição
 
-Agradecemos o seu interesse em contribuir para o **Video Download Unlimited**! Este projeto é mantido pela comunidade e qualquer contribuição — seja reportando erros, sugerindo melhorias de interface ou submetendo código — é muito bem-vinda.
+Agradecemos o seu interesse em contribuir para o **Video Download Unlimited**. Este projeto é de código aberto e contribuições — seja reportando problemas, sugerindo melhorias ou submetendo código — são bem-vindas.
 
 ---
 
-## 🚀 Como Executar Localmente em Modo Desenvolvedor
+## Como Executar Localmente em Modo Desenvolvedor
 
 Por ser uma extensão baseada puramente em padrões web nativos (**Manifest V3** e **WebAssembly**) sem etapas de build obrigatórias, o processo de execução é imediato:
 
@@ -22,11 +22,11 @@ Por ser uma extensão baseada puramente em padrões web nativos (**Manifest V3**
 5. Clique em **Carregar sem compactação** (*Load unpacked*) e selecione a pasta raiz deste repositório.
 6. Sempre que fizer alterações no código:
    - Para arquivos em `popup/`, `options/` ou `sidepanel/`: basta fechar e reabrir a respectiva interface.
-   - Para alterações em `background/service_worker.js` ou `manifest.json`: clique no botão de atualizar (ícone de recarregar 🔄) no card da extensão em `chrome://extensions/`.
+   - Para alterações em `background/service_worker.js` ou `manifest.json`: clique no botão de atualizar no card da extensão em `chrome://extensions/`.
 
 ---
 
-## 💡 Diretrizes para Envio de Pull Requests
+## Diretrizes para Envio de Pull Requests
 
 1. **Crie uma branch descritiva**:
    ```bash
@@ -45,7 +45,7 @@ Por ser uma extensão baseada puramente em padrões web nativos (**Manifest V3**
 
 ---
 
-## 🐛 Reportando Problemas (Issues)
+## Reportando Problemas (Issues)
 
 Ao abrir uma issue, certifique-se de incluir:
 - Versão do navegador Chromium e Sistema Operacional.
