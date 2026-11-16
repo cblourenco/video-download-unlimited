@@ -180,6 +180,7 @@ Em conformidade com os princípios de segurança da Chrome Web Store e do ecossi
 | `storage` | Salva as preferências de usuário (tema, limites de download) e histórico localmente. |
 | `downloads` | Envia o arquivo final convertido (MP4, MP3, etc.) diretamente para a pasta de Downloads. |
 | `webRequest` | Detecta URLs de mídias e listas de reprodução (`.m3u8`, `.mp4`) trafegadas na página aberta. |
+| `declarativeNetRequest` | Aplica regras declarativas de cabeçalhos (`Referer` e `Origin`) para contornar proteções anti-hotlinking de servidores de vídeo. |
 | `sidePanel` | Habilita a visualização lateral persistente enquanto você navega. |
 | `notifications` | Notifica o sistema operacional quando um download longo ou conversão termina. |
 | `offscreen` | Permite rodar o motor WebAssembly em segundo plano sem travar a interface da aba. |

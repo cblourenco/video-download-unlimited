@@ -1,7 +1,8 @@
-// Video Download Unlimited - Offscreen HLS Engine
-// Responsável por baixar, descriptografar (AES-128), concatenar e empacotar segmentos HLS em arquivo MP4 final
+// Video Download Unlimited - Offscreen Engine
+// Responsável por baixar, descriptografar (AES-128), concatenar segmentos HLS e processar downloads diretos com Referer e streaming
 
-const activeHlsJobs = new Map(); // itemId -> { controller, aborted }
+const activeJobs = new Map(); // itemId -> { controller, aborted }
+const activeHlsJobs = activeJobs; // Alias para compatibilidade
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.target === 'offscreen') {
@@ -10,12 +11,17 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       sendResponse({ status: 'started' });
       return true;
     }
-    if (msg.type === 'CANCEL_HLS_DOWNLOAD') {
-      const job = activeHlsJobs.get(msg.itemId);
+    if (msg.type === 'PROCESS_DIRECT_DOWNLOAD') {
+      handleDirectDownload(msg.payload);
+      sendResponse({ status: 'started' });
+      return true;
+    }
+    if (msg.type === 'CANCEL_HLS_DOWNLOAD' || msg.type === 'CANCEL_DOWNLOAD') {
+      const job = activeJobs.get(msg.itemId);
       if (job) {
         job.aborted = true;
         job.controller.abort();
-        activeHlsJobs.delete(msg.itemId);
+        activeJobs.delete(msg.itemId);
       }
       sendResponse({ status: 'cancelled' });
       return true;
@@ -27,6 +33,118 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     }
   }
 });
+
+// Processa downloads de arquivos únicos (MP4, WebM, MP3, etc.) com streaming, proteção Referer e progresso em tempo real
+async function handleDirectDownload(item) {
+  const itemId = item.id;
+  const url = item.url;
+  const safeTitle = cleanTitle(item.title);
+  const ext = (item.format || 'mp4').toLowerCase();
+  const filename = `${safeTitle}.${ext}`;
+
+  const controller = new AbortController();
+  activeJobs.set(itemId, { controller, aborted: false });
+
+  function notifyProgress(percent, text) {
+    chrome.runtime.sendMessage({
+      type: 'DOWNLOAD_PROGRESS',
+      id: itemId,
+      percent: percent,
+      statusText: text
+    }).catch(() => {});
+  }
+
+  try {
+    notifyProgress(5, 'Conectando ao servidor...');
+
+    // Configura cabeçalhos de requisição preservando a origem da página para contornar proteções anti-hotlinking (EroMe, Twitter, etc.)
+    const headers = {};
+    if (item.pageUrl) {
+      headers['Referer'] = item.pageUrl;
+      try {
+        headers['Origin'] = new URL(item.pageUrl).origin;
+      } catch (e) {}
+    }
+
+    const response = await fetch(url, {
+      signal: controller.signal,
+      headers: headers,
+      referrer: item.pageUrl || undefined,
+      credentials: 'omit'
+    });
+
+    if (!response.ok) {
+      throw new Error(`Servidor retornou HTTP ${response.status} (${response.statusText})`);
+    }
+
+    const contentType = response.headers.get('content-type') || '';
+    if (contentType.includes('text/html')) {
+      throw new Error('Servidor retornou página HTML de erro em vez do arquivo de vídeo.');
+    }
+
+    const contentLengthHeader = response.headers.get('content-length');
+    const totalBytes = contentLengthHeader ? parseInt(contentLengthHeader, 10) : (item.size || 0);
+
+    const reader = response.body.getReader();
+    const chunks = [];
+    let receivedBytes = 0;
+    let lastNotifyTime = 0;
+
+    while (true) {
+      if (controller.signal.aborted) {
+        throw new DOMException('Aborted', 'AbortError');
+      }
+
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      chunks.push(value);
+      receivedBytes += value.length;
+
+      const now = Date.now();
+      if (now - lastNotifyTime > 200) {
+        lastNotifyTime = now;
+        let percent = 50;
+        let statusStr = '';
+        const receivedMb = (receivedBytes / (1024 * 1024)).toFixed(1);
+
+        if (totalBytes > 0) {
+          const totalMb = (totalBytes / (1024 * 1024)).toFixed(1);
+          percent = Math.min(95, Math.round(5 + (receivedBytes / totalBytes) * 90));
+          statusStr = `${receivedMb} MB / ${totalMb} MB (${percent}%)`;
+        } else {
+          statusStr = `${receivedMb} MB baixados...`;
+        }
+
+        notifyProgress(percent, statusStr);
+      }
+    }
+
+    notifyProgress(97, 'Finalizando arquivo...');
+    const mimeType = contentType || (ext === 'mp3' ? 'audio/mpeg' : 'video/mp4');
+    const blob = new Blob(chunks, { type: mimeType });
+    const blobUrl = URL.createObjectURL(blob);
+
+    notifyProgress(99, 'Salvando no computador...');
+    chrome.runtime.sendMessage({
+      type: 'TRIGGER_FINAL_DOWNLOAD',
+      blobUrl: blobUrl,
+      filename: filename,
+      item: item
+    });
+
+    activeJobs.delete(itemId);
+
+  } catch (err) {
+    activeJobs.delete(itemId);
+    if (controller.signal.aborted || err.name === 'AbortError') {
+      notifyProgress(-2, 'Download cancelado');
+      return;
+    }
+    console.error('Erro no download direto:', err);
+    notifyProgress(-1, `Erro: ${err.message}`);
+  }
+}
 
 const keyCache = new Map();
 

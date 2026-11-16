@@ -1,7 +1,7 @@
 {
    "manifest_version": 3,
    "name": "Video Download Unlimited",
-   "version": "1.0.0",
+   "version": "1.0.1",
    "description": "Baixe vídeos e áudios da web em alta qualidade sem limites e com 1 clique.",
    "author": "Video Download Unlimited Team",
    "icons": {
@@ -44,6 +44,7 @@
       "storage",
       "downloads",
       "webRequest",
+      "declarativeNetRequest",
       "sidePanel",
       "tabs",
       "notifications",

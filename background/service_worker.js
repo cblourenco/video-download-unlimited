@@ -146,6 +146,8 @@ chrome.webRequest.onHeadersReceived.addListener(
         format: isManifest ? (isDash ? 'DASH' : 'HLS') : getFormatFromUrlOrType(url, contentType),
         size: contentLength,
         quality: isManifest ? 'Multi-Res' : guessQuality(url, contentType),
+        pageUrl: details.initiator || '',
+        initiator: details.initiator || '',
         timestamp: Date.now()
       });
     }
@@ -349,6 +351,9 @@ function registerTabMedia(tabId, item) {
       thumbnail = thumbs[map.size] || thumbs[0] || '';
     }
 
+    const resolvedPageUrl = item.pageUrl || (tab && tab.url ? tab.url : '') || '';
+    const resolvedInitiator = item.initiator || (resolvedPageUrl ? (() => { try { return new URL(resolvedPageUrl).origin; } catch(e){ return ''; } })() : '');
+
     const finalItem = {
       id: Math.random().toString(36).substring(2, 9),
       videoKey: videoKey,
@@ -357,7 +362,9 @@ function registerTabMedia(tabId, item) {
       baseTitle: baseTitle,
       thumbnail: thumbnail,
       favicon: favicon,
-      ...item
+      ...item,
+      pageUrl: resolvedPageUrl,
+      initiator: resolvedInitiator
     };
     if (thumbnail) finalItem.thumbnail = thumbnail;
     map.set(item.url, finalItem);
@@ -507,16 +514,16 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     // Cancela o processo ativo
     const active = activeDownloads.get(itemId);
     if (active) {
-      if (active.isHls) {
-        chrome.runtime.sendMessage({
-          target: 'offscreen',
-          type: 'CANCEL_HLS_DOWNLOAD',
-          itemId: itemId
-        }).catch(() => {});
-      } else if (active.nativeDownloadId) {
+      chrome.runtime.sendMessage({
+        target: 'offscreen',
+        type: 'CANCEL_DOWNLOAD',
+        itemId: itemId
+      }).catch(() => {});
+      if (active.nativeDownloadId) {
         chrome.downloads.cancel(active.nativeDownloadId).catch(() => {});
       }
       activeDownloads.delete(itemId);
+      removeRefererHeaderRule();
     }
 
     chrome.runtime.sendMessage({
@@ -539,13 +546,12 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     isQueueProcessing = false;
 
     for (const [id, active] of activeDownloads.entries()) {
-      if (active.isHls) {
-        chrome.runtime.sendMessage({
-          target: 'offscreen',
-          type: 'CANCEL_HLS_DOWNLOAD',
-          itemId: id
-        }).catch(() => {});
-      } else if (active.nativeDownloadId) {
+      chrome.runtime.sendMessage({
+        target: 'offscreen',
+        type: 'CANCEL_DOWNLOAD',
+        itemId: id
+      }).catch(() => {});
+      if (active.nativeDownloadId) {
         chrome.downloads.cancel(active.nativeDownloadId).catch(() => {});
       }
 
@@ -557,6 +563,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       }).catch(() => {});
     }
     activeDownloads.clear();
+    removeRefererHeaderRule();
 
     // Libera qualquer resolver pendente na fila
     for (const [id, resolver] of queueItemResolvers.entries()) {
@@ -638,8 +645,11 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         // Marca no mapa de mídias da aba
         markItemAsDownloadedInTabs(item);
 
+        // Limpa regra temporária de cabeçalho
+        removeRefererHeaderRule();
+
         // Salva no histórico e notifica desktop
-        saveDownloadToHistory(downloadId, item, 'MP4 (HLS)');
+        saveDownloadToHistory(downloadId, item, item.format || 'MP4');
 
         // Avança a fila do background imediatamente!
         completeQueueItem(item.id);
@@ -740,6 +750,45 @@ async function processDownloadQueue() {
   chrome.runtime.sendMessage({ type: 'BATCH_QUEUE_COMPLETED' }).catch(() => {});
 }
 
+// Configura regra dinâmica de Referer e Origin para garantir passagem por proteções anti-hotlinking
+async function setRefererHeaderRule(mediaUrl, refererUrl) {
+  if (!chrome.declarativeNetRequest || !mediaUrl || !refererUrl) return;
+  try {
+    const origin = new URL(refererUrl).origin;
+    await chrome.declarativeNetRequest.updateSessionRules({
+      removeRuleIds: [8888],
+      addRules: [
+        {
+          id: 8888,
+          priority: 2,
+          action: {
+            type: 'modifyHeaders',
+            requestHeaders: [
+              { header: 'Referer', operation: 'set', value: refererUrl },
+              { header: 'Origin', operation: 'set', value: origin }
+            ]
+          },
+          condition: {
+            urlFilter: mediaUrl.split('?')[0],
+            resourceTypes: ['main_frame', 'sub_frame', 'xmlhttprequest', 'media', 'other']
+          }
+        }
+      ]
+    });
+  } catch (e) {
+    console.warn('Aviso ao aplicar regra de cabeçalho Referer:', e);
+  }
+}
+
+async function removeRefererHeaderRule() {
+  if (!chrome.declarativeNetRequest) return;
+  try {
+    await chrome.declarativeNetRequest.updateSessionRules({
+      removeRuleIds: [8888]
+    });
+  } catch (e) {}
+}
+
 // Gerenciador de Downloads
 async function startDownload(item, sendResponse) {
   try {
@@ -758,8 +807,9 @@ async function startDownload(item, sendResponse) {
       statusText: 'Iniciando...'
     });
 
+    await ensureOffscreenDocument();
+
     if (isHls) {
-      await ensureOffscreenDocument();
       setTimeout(() => {
         chrome.runtime.sendMessage({
           target: 'offscreen',
@@ -772,52 +822,20 @@ async function startDownload(item, sendResponse) {
       return;
     }
 
-    // Download Direto de arquivos únicos (MP4/WebM/MP3)
-    const store = await chrome.storage.local.get(['settings', 'history']);
-    const settings = store.settings || DEFAULT_SETTINGS;
-    const safeTitle = cleanTitle(item.title);
-    const ext = item.format ? item.format.toLowerCase() : 'mp4';
-    const filename = `${safeTitle}.${ext}`;
-    const targetFilePath = getDownloadFilePath(item, filename, settings);
+    // Download Direto de arquivos únicos (MP4/WebM/MP3) com streaming e proteção de Referer
+    if (item.pageUrl) {
+      await setRefererHeaderRule(item.url, item.pageUrl);
+    }
 
-    chrome.downloads.download({
-      url: item.url,
-      filename: targetFilePath,
-      saveAs: false,
-      conflictAction: 'uniquify'
-    }, (downloadId) => {
-      activeDownloads.delete(item.id);
-
-      if (chrome.runtime.lastError) {
-        completeQueueItem(item.id);
-        sendResponse({ success: false, error: chrome.runtime.lastError.message });
-        return;
-      }
-
-      const active = activeDownloads.get(item.id);
-      if (active) {
-        active.nativeDownloadId = downloadId;
-      }
-
-      // Marca no mapa de mídias da aba
-      markItemAsDownloadedInTabs(item);
-
-      // Salva no histórico
-      saveDownloadToHistory(downloadId, item, item.format);
-
-      // Notifica progresso 100%
+    setTimeout(() => {
       chrome.runtime.sendMessage({
-        type: 'DOWNLOAD_PROGRESS',
-        id: item.id,
-        percent: 100,
-        statusText: 'Download Concluído!'
-      }).catch(() => {});
+        target: 'offscreen',
+        type: 'PROCESS_DIRECT_DOWNLOAD',
+        payload: item
+      });
+    }, 150);
 
-      // Avança a fila
-      completeQueueItem(item.id);
-
-      sendResponse({ success: true, downloadId });
-    });
+    sendResponse({ success: true, mode: 'direct_streaming' });
   } catch (err) {
     completeQueueItem(item.id);
     sendResponse({ success: false, error: err.message });
